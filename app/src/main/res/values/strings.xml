@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">TVBox</string>
+    <string name="app_name_debug">TVBoxDebug</string>
+    <string name="app_name_test">TVBoxTest</string>
 </resources>

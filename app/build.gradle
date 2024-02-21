@@ -11,7 +11,7 @@ android {
             keyPassword 'demokey'
         }
     }
-    
+
     defaultConfig {
         applicationId 'com.github.tvbox.osc'
         minSdkVersion 16
@@ -25,6 +25,7 @@ android {
                 arguments = ["room.schemaLocation": "$projectDir/schemas".toString()]
             }
         }
+        flavorDimensions "default"
     }
 
     packagingOptions {
@@ -36,9 +37,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             minifyEnabled false
             signingConfig signingConfigs.demokey
-            
+
             ndk {
-                abiFilters "armeabi-v7a", "arm64-v8a", "x86" ,  "x86_64"
+                abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
             }
         }
         release {
@@ -47,7 +48,7 @@ android {
             signingConfig signingConfigs.demokey
 
             ndk {
-                abiFilters "armeabi-v7a", "arm64-v8a", "x86" ,  "x86_64"
+                abiFilters "armeabi-v7a", "arm64-v8a", "x86", "x86_64"
             }
         }
     }
@@ -67,8 +68,32 @@ android {
         additionalParameters += '--set-max-idx-number=48000'
         additionalParameters += '--minimal-main-dex'
     }
-    
-        //按abi拆分包
+
+    // 渠道
+    productFlavors {
+        appDev {
+            applicationIdSuffix ".dev"
+            manifestPlaceholders = [
+                    app_icon: "@drawable/app_icon",
+                    app_name: "@string/app_name_debug"
+            ]
+        }
+        appTest {
+            applicationIdSuffix ".test"
+            manifestPlaceholders = [
+                    app_icon: "@drawable/app_icon",
+                    app_name: "@string/app_name_test"
+            ]
+        }
+        appProd {
+            manifestPlaceholders = [
+                    app_icon: "@drawable/app_icon",
+                    app_name: "@string/app_name"
+            ]
+        }
+    }
+
+    //按abi拆分包
     splits {
         abi {
             enable true
@@ -77,15 +102,15 @@ android {
             // 指定支持的ABIs
             //include 'armeabi-v7a', 'arm64-v8a', "x86" ,  "x86_64" 
             // 要不要一个全量ABIs的包
-            universalApk true 
+            universalApk true
         }
     }
     applicationVariants.all { variant ->
         variant.outputs.all { output ->
             def abi = output.getFilter(com.android.build.OutputFile.ABI)
             if (abi == null) abi = "all"
-            
-            def fileName = project.name + '-' + variant.name + '-V' +
+
+            def fileName = rootProject.name + '-' + variant.name + '-V' +
                     defaultConfig.versionName + '-' + abi + ".apk"
             outputFileName = fileName
         }
